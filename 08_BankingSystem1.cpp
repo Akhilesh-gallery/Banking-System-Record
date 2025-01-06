@@ -3,23 +3,25 @@
 #include<fstream>
 #include<windows.h>
 #include<sstream>
+#include<time.h>
 using namespace std;
 
 class Account{
-string AccountHolderName,AccountNumber;
+string AccountHolderName;
+long long AccountNumber;
 double balance;
 vector<string> TransactionHistory;
 public:
-Account() : AccountHolderName(""),AccountNumber(""),balance(0){}
-void setAccountNumber(string number);
+Account() : AccountHolderName(""),AccountNumber(0),balance(0){}
+void setAccountNumber(long long number);
 void setAccountHolderName(string name);
 void setAccountBalance(double bal);
-string getAccountNumber();
+long long getAccountNumber();
 string getAccountHolderName();
 double getAccountBalance();
 };
 
-void Account :: setAccountNumber(string number){
+void Account :: setAccountNumber(long long number){
 AccountNumber = number;
 }
 void Account :: setAccountHolderName(string name){
@@ -30,7 +32,7 @@ void Account :: setAccountBalance(double bal){
     balance = bal;
 }
 
-string Account :: getAccountNumber(){
+long long Account :: getAccountNumber(){
     return AccountNumber;
 }
 
@@ -42,16 +44,44 @@ double Account :: getAccountBalance(){
     return balance;
 }
 
+
+
 void openAccount(Account user){
 system("cls");
-string accNo,name;
+string name;
+long long accNo;
+srand(time(0));
+accNo = rand()%999999999999 + 100000000000;
 
-cout<<"\tEnter account number: ";
-cin>>accNo;
+ifstream infile("D:/accounts.txt");
+if(!infile){
+    cout<<"Error! file not opening"<<endl;
+}
+
+string line;
+
+while(getline(infile,line)){
+    stringstream ss;
+    ss<<line;
+
+    string userName;
+    long long userAccNo;
+    double userbalance;
+    char delimeter;
+
+    ss>>userAccNo>>delimeter>>userName>>delimeter>>userbalance;
+    if(accNo == userAccNo){
+        srand(time(0));
+        accNo = rand()%999999999999 + 100000000000;
+    }
+
+}
 user.setAccountNumber(accNo);
+cout<<"Your account number is: "<<user.getAccountNumber()<<endl;
 
 cout<<"\tEnter account holder name: ";
-cin>>name;
+cin.ignore();
+getline(cin,name);
 user.setAccountHolderName(name);
 
 user.setAccountBalance(0);
@@ -98,7 +128,7 @@ void depositeAmount(){
             double newbalance = userBalance + amount;
             userBalance = newbalance;
             outFile<<"\t"<<userAccNo<<" : "<<userName<<" : "<<userBalance<<endl;
-            cout<<"\tNew Balance is: "<<userBalance<<endl;
+            cout<<"\tYour Balance is: "<<userBalance<<endl;
         }
         else{
             outFile<<line<<endl;
